@@ -16,7 +16,7 @@ public class StreamReaderScript : MonoBehaviour
 	protected List<GameObject> textmeshGOs = new List<GameObject>();
  	
 	// Use this for initialization
-	void Start ()
+	protected virtual void Start ()
 	{
 		string fileName = fileNames[fileNum];
 //		string filePath = Application.dataPath + "/" + fileName;
@@ -41,8 +41,10 @@ public class StreamReaderScript : MonoBehaviour
 //					newWord.AddComponent<TextMesh>();
 //					newWord.GetComponent<TextMesh>().text = someWord;
 //					textmeshGOs.Add(newWord);
-					words.Add(someWord);
-					someWord = "";
+					Debug.Log(someWord);
+					words.Add(someWord);					
+					someWord = "";	
+					
 				}
 			}
 
@@ -50,22 +52,13 @@ public class StreamReaderScript : MonoBehaviour
 		}
 		
 		sr.Close();
-		
-//		StreamReader secondPass = new StreamReader(path);
-//
-//		while (!secondPass.EndOfStream)
-//		{
-//			string line = secondPass.ReadLine();
-//			for (int i = 0; i < line.Length; i++)
-//			{
-//				if (i != spaceIndices[i])
-//				{
-//				}
-//			}
-//		}
-//		secondPass.Close();
+		FindObjectOfType<WordEmitter>().Setup();
 	}
-	
+
+	protected virtual void Setup()
+	{
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.Space))
