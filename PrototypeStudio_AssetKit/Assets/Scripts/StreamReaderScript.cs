@@ -41,8 +41,7 @@ public class StreamReaderScript : MonoBehaviour
 //					newWord.AddComponent<TextMesh>();
 //					newWord.GetComponent<TextMesh>().text = someWord;
 //					textmeshGOs.Add(newWord);
-					Debug.Log(someWord);
-					words.Add(someWord);					
+ 					words.Add(someWord);					
 					someWord = "";	
 					
 				}
