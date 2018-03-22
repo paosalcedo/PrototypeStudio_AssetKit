@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+	private Main main;
 	public static Player instance;
 
 	Rewired.Player player;
@@ -15,8 +17,12 @@ public class Player : MonoBehaviour
 	[SerializeField] private float speed;
 	[SerializeField]private Vector3 moveVector;
 	[SerializeField] private Vector2 lookVector;
+
+	private int wordsWritten = 0;
 	
-	void Start () {
+	void Start ()
+	{
+		main = FindObjectOfType<Main>();
 		if(instance == null){
 			instance = this;
 			DontDestroyOnLoad(this);
@@ -29,9 +35,26 @@ public class Player : MonoBehaviour
 	}
 
 	// Update is called once per frame
-	void Update () {
-		GetInput();
-		ProcessInput();
+	void Update()
+	{
+		switch (main.gameState)
+		{
+			case Main.GameState.Intro:
+				break;
+			case Main.GameState.Game:
+				GetInput();
+				ProcessInput();
+				break;
+			case Main.GameState.End:
+				if (Input.GetKeyDown(KeyCode.R))
+				{
+					SceneManager.LoadScene("main");
+				}
+				break;
+			default:
+				break;
+		}
+
 	}
 
 	private void GetInput()
@@ -45,24 +68,49 @@ public class Player : MonoBehaviour
 
 	private void ProcessInput()
 	{
-//		rb.velocity = moveVector * speed;
-		rb.AddRelativeForce(moveVector * speed);
- //		transform.Translate(moveVector * speed * Time.deltaTime);
-		rb.MoveRotation(Quaternion.Euler(lookVector));
-//		Camera.main.transform.eulerAngles = lookVector;
-	}
+ 		rb.AddRelativeForce(moveVector * speed);
+ 		rb.MoveRotation(Quaternion.Euler(lookVector));
 
-	private void OnCollisionEnter(Collision other)
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			SceneManager.LoadScene("main");
+		}
+ 	}
+
+	private void OnTriggerEnter(Collider other)
 	{
 		if (other.gameObject.GetComponent<Word>() != null)
-		{
-			Debug.Log("Hit text!");
+		{	
 			TextMeshPro wordHit = other.gameObject.GetComponent<TextMeshPro>();
 			string text = wordHit.text;
-			// WriteAllText creates a file, writes the specified string to the file,
-			// and then closes the file.    You do NOT need to call Flush() or Close().
-			System.IO.File.WriteAllText(@"C:\Users\Pao Salcedo\Desktop\WriteText.txt", text);
-			
+			wordHit.color = Color.yellow;
+			if (wordsWritten <= 4 && wordsWritten > 0)
+			{
+				TextUtilities.WriteStringToFile(Application.dataPath, Main.title + "_" + Main.author, wordHit.text + " ", false);
+				++wordsWritten;
+				StartCoroutine(ChangeTextColorOnHit(wordHit));
+			}
+			else if (wordsWritten == 0)
+			{
+				TextUtilities.WriteStringToFile(Application.dataPath, Main.title + "_" + Main.author, "\n\n" + wordHit.text + " ", false);
+				++wordsWritten;
+				StartCoroutine(ChangeTextColorOnHit(wordHit));
+			}
+			else if (wordsWritten > 4)
+			{
+				TextUtilities.WriteStringToFile(Application.dataPath, Main.title + "_" + Main.author, wordHit.text + " ", true);
+				wordsWritten = 1;
+				StartCoroutine(ChangeTextColorOnHit(wordHit));
+			} 
+
+
+//			System.IO.File.WriteAllText(@"C:\Users\Pao Salcedo\Desktop\WriteText.txt", text);	
 		}
+	}
+
+	private IEnumerator ChangeTextColorOnHit(TextMeshPro someText)
+	{
+		yield return new WaitForSeconds(3f);
+		someText.color = Color.black;
 	}
 }
