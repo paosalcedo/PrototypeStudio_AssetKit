@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using ProBuilder2.Interface;
 using UnityEngine;
 using TMPro;
 
@@ -20,7 +19,12 @@ public class Word : MonoBehaviour
 	void Update () {
  
 		//Look at player
-		
+		if (GetPlayerDistance() > 100f)
+		{
+			LookAtPlayer();
+		}
+
+
 		TurnOnColliderWhenPlayerIsNear();
 	}
 
@@ -33,6 +37,7 @@ public class Word : MonoBehaviour
 				gameObject.AddComponent<BoxCollider>();
 				BoxCollider boxCollider = GetComponent<BoxCollider>();
 				boxCollider.size *= 2f;
+				boxCollider.size = new Vector3(boxCollider.size.x, boxCollider.size.y, 20f);
 //				gameObject.GetComponent<MeshCollider>().isTrigger = true;
 //				gameObject.GetComponent<MeshCollider>().convex = true;
 				hasCollider = true;
@@ -40,8 +45,6 @@ public class Word : MonoBehaviour
 		}
 		else if (GetPlayerDistance() > 30f)
 		{
-			LookAtPlayer();
-
 			if (hasCollider)
 			{
 				Destroy(gameObject.GetComponent<BoxCollider>());

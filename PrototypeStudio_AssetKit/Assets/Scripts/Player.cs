@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 	private Main main;
 	public static Player instance;
 
-	Rewired.Player player;
+	public Rewired.Player player;
 	public int playerId = 0;
 	// Use this for initialization
 	private Rigidbody rb;
@@ -25,8 +25,7 @@ public class Player : MonoBehaviour
 		main = FindObjectOfType<Main>();
 		if(instance == null){
 			instance = this;
-			DontDestroyOnLoad(this);
-		} else {
+ 		} else {
 			Destroy(gameObject);
 		}
 
@@ -84,6 +83,7 @@ public class Player : MonoBehaviour
 			TextMeshPro wordHit = other.gameObject.GetComponent<TextMeshPro>();
 			string text = wordHit.text;
 			wordHit.color = Color.yellow;
+			AudioManager.instance.PlaySFXOnHit();
 			if (wordsWritten <= 4 && wordsWritten > 0)
 			{
 				TextUtilities.WriteStringToFile(Application.dataPath, Main.title + "_" + Main.author, wordHit.text + " ", false);

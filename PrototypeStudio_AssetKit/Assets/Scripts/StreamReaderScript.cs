@@ -16,11 +16,11 @@ public class StreamReaderScript : MonoBehaviour
 	protected List<GameObject> textmeshGOs = new List<GameObject>();
  	
 	// Use this for initialization
-	protected virtual void Start ()
+	public void ReadPoemAtStart ()
 	{
 		string fileName = fileNames[fileNum];
-//		string filePath = Application.dataPath + "/" + fileName;
-		string path = "Assets/Resources/" + fileName;
+		string path = Application.dataPath + "/" + fileName;
+//		string path = "Assets/Resources/" + fileName;
 
 		StreamReader sr = new StreamReader(path);	
  		
@@ -51,20 +51,6 @@ public class StreamReaderScript : MonoBehaviour
 		}
 		
 		sr.Close();
-		FindObjectOfType<WordEmitter>().Setup();
 	}
 
-	protected virtual void Setup()
-	{
-	}
-
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-//			Debug.Log(someWord);
-		}
-		
-		
-	}
 }

@@ -12,7 +12,7 @@ public class WordEmitter : StreamReaderScript
 	public Font newFont;
 //	private List<GameObject> wordGameObjects = new List<GameObject>();
 
-	protected override void Setup()
+	public void Setup()
 	{
 		for(wordIndex = 0; wordIndex<words.Count; ++wordIndex)
 		{
