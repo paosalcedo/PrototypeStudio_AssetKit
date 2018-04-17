@@ -90,7 +90,7 @@ public class Main : MonoBehaviour
 		author = nameField.text;
 		TextUtilities.WriteStringToFile(Application.dataPath, title + "_" + author, titleField.text, true);
 		TextUtilities.WriteStringToFile(Application.dataPath, title + "_" + author, "\nA poem by " + nameField.text, true);
-		srScript.ReadPoemAtStart();
+		srScript.ReadPoem();
 		wordEmitter.Setup();
 		gameState = GameState.Game;
 	}

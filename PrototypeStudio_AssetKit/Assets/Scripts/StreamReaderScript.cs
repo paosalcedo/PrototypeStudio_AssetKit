@@ -11,16 +11,14 @@ public class StreamReaderScript : MonoBehaviour
 
 	private int fileNum = 0;
 	
-//	string someWord = "";
- 	protected List<string> words = new List<string>();
+  	protected List<string> words = new List<string>();
 	protected List<GameObject> textmeshGOs = new List<GameObject>();
  	
 	// Use this for initialization
-	public void ReadPoemAtStart ()
+	public void ReadPoem ()
 	{
 		string fileName = fileNames[fileNum];
 		string path = Application.dataPath + "/" + fileName;
-//		string path = "Assets/Resources/" + fileName;
 
 		StreamReader sr = new StreamReader(path);	
  		
@@ -34,20 +32,13 @@ public class StreamReaderScript : MonoBehaviour
 				if (line[i] != ' ')
 				{
 					someWord = someWord + line[i].ToString();
-//					spaceIndices.Add(i);
 				} else if (line[i] == ' ')
 				{
-// 					GameObject newWord = new GameObject();
-//					newWord.AddComponent<TextMesh>();
-//					newWord.GetComponent<TextMesh>().text = someWord;
-//					textmeshGOs.Add(newWord);
  					words.Add(someWord);					
 					someWord = "";	
 					
 				}
 			}
-
-			
 		}
 		
 		sr.Close();

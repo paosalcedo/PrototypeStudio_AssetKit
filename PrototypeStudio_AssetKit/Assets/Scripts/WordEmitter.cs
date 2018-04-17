@@ -8,9 +8,10 @@ using Random = UnityEngine.Random;
 public class WordEmitter : StreamReaderScript
 {
 //	private float emissionInterval = 0f;
+//	private List<GameObject> wordGameObjects = new List<GameObject>();
+	
 	private int wordIndex = 0;
 	public Font newFont;
-//	private List<GameObject> wordGameObjects = new List<GameObject>();
 
 	public void Setup()
 	{
@@ -25,18 +26,8 @@ public class WordEmitter : StreamReaderScript
 			newTextMeshPro.enableWordWrapping = false;
 			newTextMeshPro.text = words[wordIndex];
 			newTextMeshPro.color = Color.black;
-//			newWord.transform.position = Player.instance.gameObject.transform.position + new Vector3(Random.Range(-100, 100), Random.Range(-100f, 100f), Random.Range(-100, 100));
-			newWord.transform.position = Player.instance.gameObject.transform.position + Random.insideUnitSphere * 1000f;
+ 			newWord.transform.position = Player.instance.gameObject.transform.position + Random.insideUnitSphere * 1000f;
  		}
-	}
-
-	void Update()
-	{
-		WordColorUpdate();
-	}
-
-	private void WordColorUpdate()
-	{
 	}
 
 //	public void Update()
