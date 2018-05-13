@@ -8,7 +8,7 @@ public class AudioManager : MonoBehaviour
 
 	private AudioSource ambient;
 	private AudioSource music;
-	private AudioSource sfx;
+//	private AudioSource sfx;
 	[SerializeField]private AudioClip[] pianoClips;
 	[SerializeField]private AudioClip[] ambientClips;
 	[SerializeField] private AudioClip[] musicClips;
@@ -26,9 +26,9 @@ public class AudioManager : MonoBehaviour
 		music.clip = musicClips[Random.Range(0, musicClips.Length)];
 		music.Play();	
 		music.loop = true;
-		sfx = gameObject.AddComponent<AudioSource>();
-		sfx.playOnAwake = false;
-		sfx.loop = false;
+//		AudioSource sfx = gameObject.AddComponent<AudioSource>();
+//		sfx.playOnAwake = false;
+//		sfx.loop = false;
 	}
 	
 	// Update is called once per frame
@@ -36,9 +36,11 @@ public class AudioManager : MonoBehaviour
 
 	public void PlaySFXOnHit()
 	{
+		AudioSource sfx = gameObject.AddComponent<AudioSource>();
 		sfx.clip = pianoClips[Random.Range(0, pianoClips.Length - 1)];
-		sfx.pitch = Random.Range(0.5f, 1.5f);
+//		sfx.pitch = Random.Range(0.5f, 1.5f);
 		sfx.PlayScheduled(AudioSettings.dspTime + 0.00000001f);
+		Destroy(sfx, sfx.clip.length);
 	}
 
 }
