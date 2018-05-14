@@ -14,8 +14,11 @@ public class Main : MonoBehaviour
 	{
 		Intro,
 		Game,
+		Authorship, 
 		End
 	}
+
+	private FSM<Main> _fsm;
 
 	public GameState gameState; 
 
@@ -29,6 +32,8 @@ public class Main : MonoBehaviour
 	
 	public static string title;
 	public static string author;
+	public static string poemText;
+	public int poemNum;
 
 	public TextMeshProUGUI poem;
 	public TextMeshProUGUI poemBG;
@@ -39,17 +44,30 @@ public class Main : MonoBehaviour
 	private Vector3 poemPosition;
 	private float poemY = 0;
 	
+	//state-based gameobjects
+	[SerializeField] private GameObject intro;
+	[SerializeField] private GameObject game;
+	[SerializeField] private GameObject authorship;	
+	[SerializeField] private GameObject end;
+	
 	// Use this for initialization
 	void Start ()
 	{
+		_fsm = new FSM<Main>(this);
  		wordEmitter = FindObjectOfType<WordEmitter>();
 		wordsHolder = GameObject.Find("Words");
 		srScript = FindObjectOfType<StreamReaderScript>();
+		if (poemNum != 0)
+		{
+			++poemNum;		
+		}
+		_fsm.TransitionTo<IntroState>();
 		gameState = GameState.Intro;
-	}
+ 	}
 	
 	// Update is called once per frame
 	void Update () {
+		_fsm.Update();
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 			Application.Quit();
@@ -58,20 +76,16 @@ public class Main : MonoBehaviour
 		switch (gameState)
 		{
 			case GameState.Intro:
-				Cursor.visible = true;
-				Cursor.lockState = CursorLockMode.None;
+				
 				break;
 			case GameState.Game:
-				Cursor.visible = false;
-				Cursor.lockState = CursorLockMode.Locked;
-				if (Input.GetKeyDown(KeyCode.Return))
-				{
-					ViewPoem();	
-				}
+				
+				break;
+			case GameState.Authorship:
+																		
 				break;
 			case GameState.End:
-				Cursor.visible = true;
-				Cursor.lockState = CursorLockMode.None;
+				
 				ScrollPoem();
  				break;
 		}
@@ -95,10 +109,41 @@ public class Main : MonoBehaviour
 		gameState = GameState.Game;
 	}
 
+	//INTRO FUNCTIONS
+	
+	public void StartGameScene()
+	{
+		author = nameField.text;
+		srScript.ReadPoem();
+		wordEmitter.Setup();
+		_fsm.TransitionTo<GameplayState>();
+ 		gameState = GameState.Game;
+	}
+	
+	//GAME FUNCTIONS
+	public void AppendAuthorNameToPoemText()
+	{
+		poemText = "by " + author + "\n" + poemText;
+	}
+
+	public void AppendTitleToPoemText()
+	{
+		title = titleField.text;
+		poemText = title + "\n" + poemText;
+		_fsm.TransitionTo<EndState>();
+	}
+
+	//AUTHORSHIP FUNCTIONS
+
+	public void SaveAuthor()
+	{
+			
+	}
+
 	public void ViewPoem()
 	{
-		controlsTextGO.SetActive(false);
 		gameState = GameState.End;
+		controlsTextGO.SetActive(false);
 		wordsHolder.SetActive(false);
 		restartButton.SetActive(true);
 		poem.text = TextUtilities.ReadTextFromFile(Application.dataPath, title + "_" + author);
@@ -113,4 +158,116 @@ public class Main : MonoBehaviour
 		SceneManager.LoadScene("main");
 	}
 
+
+	//states
+	
+	private class MainState : FSM<Main>.State {
+		
+	}
+
+	private class IntroState : MainState
+	{
+		public override void OnEnter()
+		{
+			base.OnEnter();
+			Cursor.visible = true;
+			Cursor.lockState = CursorLockMode.None;
+			Context.intro.SetActive(true);
+			Context.gameState = GameState.Intro;
+		}
+
+		public override void Update()
+		{
+			base.Update();
+			
+		}
+
+		public override void OnExit()
+		{
+			base.OnExit();
+			Context.intro.SetActive(false);
+		}
+	}
+
+	private class GameplayState : MainState
+	{
+		public override void OnEnter()
+		{
+			base.OnEnter();
+			Cursor.visible = false;
+			Cursor.lockState = CursorLockMode.Locked;
+			Context.game.SetActive(true);
+		}
+		
+
+		public override void Update()
+		{
+			base.Update();
+			if (Input.GetKeyDown(KeyCode.Return))
+			{
+				Context.AppendAuthorNameToPoemText();
+				TransitionTo<AuthorshipState>();
+			}
+		}
+
+		public override void OnExit()
+		{
+			base.OnExit();
+			Context.game.SetActive(false);
+		}
+	}
+
+	private class AuthorshipState : MainState
+	{
+		public override void OnEnter()
+		{
+			base.OnEnter();
+			Player.instance.transform.eulerAngles = Vector3.right * -90f;
+			Camera.main.transform.localPosition = new Vector3(29.41f, -5.3f, -46.2f);
+			Context.controlsTextGO.SetActive(false);
+			Context.wordsHolder.SetActive(false);
+			Context.poem.text = poemText;
+			Context.gameState = GameState.Authorship;
+			Context.authorship.SetActive(true);
+			Cursor.visible = true;
+			Cursor.lockState = CursorLockMode.None;
+		}
+
+		public override void Update()
+		{
+			base.Update();
+			Context.ScrollPoem();
+		}
+
+		public override void OnExit()
+		{
+			base.OnExit();
+			Context.authorship.SetActive(false);
+		}
+	}
+
+	private class EndState : MainState
+	{
+		public override void OnEnter()
+		{
+			base.OnEnter();
+			Cursor.visible = true;
+			Cursor.lockState = CursorLockMode.None;
+			Context.gameState = GameState.End;
+			Context.end.SetActive(true);
+			Context.poem.text = poemText;
+		}
+		
+		public override void Update()
+		{
+			base.Update();
+			Context.ScrollPoem();
+		}
+
+		public override void OnExit()
+		{
+			base.OnExit();
+			Context.end.SetActive(false);
+		}
+	}
 } 

@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
 	[SerializeField] private Vector2 lookVector;
 
 	private int wordsWritten = 0;
+	private string myPoem;
 	
 	void Start ()
 	{
@@ -76,6 +77,38 @@ public class Player : MonoBehaviour
 		}
  	}
 
+//	private void OnTriggerEnter(Collider other)
+//	{
+//		if (other.gameObject.GetComponent<Word>() != null)
+//		{	
+//			TextMeshPro wordHit = other.gameObject.GetComponent<TextMeshPro>();
+//			string text = wordHit.text;
+//			wordHit.color = Color.yellow;
+//			AudioManager.instance.PlaySFXOnHit();
+//			if (wordsWritten <= 4 && wordsWritten > 0)
+//			{
+//				TextUtilities.WriteStringToFile(Application.dataPath, Main.title + "_" + Main.author, wordHit.text + " ", false);
+//				++wordsWritten;
+//				StartCoroutine(ChangeTextColorOnHit(wordHit));
+//			}
+//			else if (wordsWritten == 0)
+//			{
+//				TextUtilities.WriteStringToFile(Application.dataPath, Main.title + "_" + Main.author, "\n\n" + wordHit.text + " ", false);
+//				++wordsWritten;
+//				StartCoroutine(ChangeTextColorOnHit(wordHit));
+//			}
+//			else if (wordsWritten > 4)
+//			{
+//				TextUtilities.WriteStringToFile(Application.dataPath, Main.title + "_" + Main.author, wordHit.text + " ", true);
+//				wordsWritten = 1;
+//				StartCoroutine(ChangeTextColorOnHit(wordHit));
+//			} 
+//
+//
+////			System.IO.File.WriteAllText(@"C:\Users\Pao Salcedo\Desktop\WriteText.txt", text);	
+//		}
+//	}
+	
 	private void OnTriggerEnter(Collider other)
 	{
 		if (other.gameObject.GetComponent<Word>() != null)
@@ -86,19 +119,25 @@ public class Player : MonoBehaviour
 			AudioManager.instance.PlaySFXOnHit();
 			if (wordsWritten <= 4 && wordsWritten > 0)
 			{
-				TextUtilities.WriteStringToFile(Application.dataPath, Main.title + "_" + Main.author, wordHit.text + " ", false);
+//				TextUtilities.WriteStringToFile(Application.dataPath, Main.author + "_" + Main.poemNum, wordHit.text + " ", false);
 				++wordsWritten;
+				myPoem = myPoem + wordHit.text +  " ";
+				Main.poemText = myPoem;
 				StartCoroutine(ChangeTextColorOnHit(wordHit));
 			}
 			else if (wordsWritten == 0)
 			{
-				TextUtilities.WriteStringToFile(Application.dataPath, Main.title + "_" + Main.author, "\n\n" + wordHit.text + " ", false);
+//				TextUtilities.WriteStringToFile(Application.dataPath, Main.author + "_" + Main.poemNum, "\n\n" + wordHit.text + " ", false);
+				myPoem = myPoem + "\n\n" + wordHit.text + " ";	
+				Main.poemText = myPoem;
 				++wordsWritten;
 				StartCoroutine(ChangeTextColorOnHit(wordHit));
 			}
 			else if (wordsWritten > 4)
 			{
-				TextUtilities.WriteStringToFile(Application.dataPath, Main.title + "_" + Main.author, wordHit.text + " ", true);
+//				TextUtilities.WriteStringToFile(Application.dataPath, Main.author + "_" + Main.poemNum, wordHit.text + " ", true);
+				myPoem = myPoem + wordHit.text + " ";
+				Main.poemText = myPoem;
 				wordsWritten = 1;
 				StartCoroutine(ChangeTextColorOnHit(wordHit));
 			} 
