@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: dac41acc3d4097c429a6861a23afc886, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 40fa5696077438a49bbce1aac01eba84, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.61441624, g: 0.6371678, b: 0.6274764, a: 1}
+  m_IndirectSpecularColor: {r: 0.86090964, g: 0.7790365, b: 0.6554663, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -386,7 +386,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 194198490}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ee1cceba9dc4a84cabdb3827a3b3e48, type: 3}
   m_Name: 
@@ -3431,6 +3431,59 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1713742108
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1713742110}
+  - component: {fileID: 1713742109}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1713742109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1713742108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee1cceba9dc4a84cabdb3827a3b3e48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pianoClips:
+  - {fileID: 8300000, guid: 1a0336d6eb7dc2b4eaf72829b30e6ce0, type: 3}
+  - {fileID: 8300000, guid: 2cbb6311c8548d64ca2a58b9b83e98d6, type: 3}
+  - {fileID: 8300000, guid: b448dd4220cd1ea4bb021b0d52f1da89, type: 3}
+  - {fileID: 8300000, guid: 6c1a85bc720f2854da7ed1f9c6e6596c, type: 3}
+  - {fileID: 8300000, guid: e3e66b35fb854c640b98354f3f6c81c7, type: 3}
+  - {fileID: 8300000, guid: 18dbfcbb91f59ba4395d85564150dd1c, type: 3}
+  - {fileID: 8300000, guid: 24ffc19553b8e914e9b9778642b04dc4, type: 3}
+  - {fileID: 8300000, guid: 60f7da3d3c5a6074bb543fdd0ed61b11, type: 3}
+  ambientClips: []
+  musicClips:
+  - {fileID: 8300000, guid: ab77791847de7fc4084c06f99a22c5d9, type: 3}
+  - {fileID: 8300000, guid: fc0507bedc5e79745a7c1780b363c9c9, type: 3}
+--- !u!4 &1713742110
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1713742108}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1791254514 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1915606396487330, guid: 2393a6fcd0fdd3f41b4423420ecc4e32,
