@@ -6,6 +6,7 @@ using DG.Tweening;
 
 public class Word : MonoBehaviour
 {
+	private const float MAX_DRAW_DIST = 30f;
 	private FSM<Word> _fsm;
 	private bool hasCollider;
 
@@ -17,6 +18,7 @@ public class Word : MonoBehaviour
 		transform.SetParent(wordsHolder.transform);
 		_fsm = new FSM<Word>(this);
 		_fsm.TransitionTo<LookingAtPlayer>();
+//		GetComponent<MeshRenderer>().
 	}
 	
 	// Update is called once per frame
@@ -33,7 +35,13 @@ public class Word : MonoBehaviour
 	}
 
 	private bool isTweenActive;
-	
+
+	private float GetDistanceToPlayer()
+	{
+		float distance = Mathf.Abs(Vector3.Distance(Player.instance.transform.position, transform.position));
+		return distance;
+	}
+
 	private void SlowLookAtTween()
 	{
  //		Sequence sequence = DOTween.Sequence();
