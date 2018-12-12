@@ -14,11 +14,13 @@ public class Word : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		EventManager.Instance.Register<Events.PlayerWordCollisionEvent>(ChangeTextColorForReadability);
 		wordsHolder = GameObject.Find("Words");
 		transform.SetParent(wordsHolder.transform);
 		_fsm = new FSM<Word>(this);
 		_fsm.TransitionTo<LookingAtPlayer>();
 //		GetComponent<MeshRenderer>().
+		ChangeTextColorForReadability(new Events.PlayerWordCollisionEvent());
 	}
 	
 	// Update is called once per frame
@@ -32,6 +34,20 @@ public class Word : MonoBehaviour
 //
 //
 //		TurnOnColliderWhenPlayerIsNear();
+	}
+
+	private void ChangeTextColorForReadability(GameEvent e)
+	{
+		if (AudioAndSkyManager.instance.IsSkyColorCloseToBlack)
+		{
+			GetComponent<TextMeshPro>().color = Random.ColorHSV(0.75f, 1, 0.75f, 1, 0.75f, 1);
+		}
+		else //if it's closer to white
+		{
+//			GetComponent<TextMeshPro>().color = Random.ColorHSV(1,1.9f,1,1.9f,1,1.9f,1,1.9f);
+//			GetComponent<TextMeshPro>().color = Color.black;
+			GetComponent<TextMeshPro>().color = Random.ColorHSV(0, 0.25f, 0, 0.25f, 0, 0.25f);
+		}
 	}
 
 	private bool isTweenActive;
@@ -69,6 +85,11 @@ public class Word : MonoBehaviour
 				hasCollider = false;
 			}
 		}
+	}
+
+	private void OnDestroy()
+	{
+		EventManager.Instance.Unregister<Events.PlayerWordCollisionEvent>(ChangeTextColorForReadability);
 	}
 
 	private void GenerateCollider()

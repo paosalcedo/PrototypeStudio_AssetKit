@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Rewired.Editor.Libraries.Rotorz.ReorderableList;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,6 +10,8 @@ using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
+	[SerializeField]private GameObject _playerModel;
+	[SerializeField] private Player _player;
 
 	public enum GameState
 	{
@@ -19,15 +22,12 @@ public class Main : MonoBehaviour
 	}
 
 	private FSM<Main> _fsm;
-
 	public GameState gameState; 
 
 	public InputField titleField;
-
 	public InputField nameField;
 
 	public GameObject restartButton;
-
 	public GameObject controlsTextGO;
 	
 	public static string title;
@@ -170,10 +170,14 @@ public class Main : MonoBehaviour
 		public override void OnEnter()
 		{
 			base.OnEnter();
+			
 			Cursor.visible = true;
 			Cursor.lockState = CursorLockMode.None;
 			Context.intro.SetActive(true);
 			Context.gameState = GameState.Intro;
+			Context._playerModel.SetActive(false);
+			UiTextManager.instance.AddAllUiTextsToList();
+			UiTextManager.instance.ChangeTextColorForReadability();
 		}
 
 		public override void Update()
@@ -185,6 +189,10 @@ public class Main : MonoBehaviour
 		public override void OnExit()
 		{
 			base.OnExit();
+			UiTextManager.instance.ClearTextsList();
+			Context._playerModel.SetActive(true);
+			Context._player.GetComponent<CharacterJoint>().connectedBody =
+				Context._playerModel.GetComponent<Rigidbody>();
 			Context.intro.SetActive(false);
 		}
 	}
@@ -197,6 +205,8 @@ public class Main : MonoBehaviour
 			Cursor.visible = false;
 			Cursor.lockState = CursorLockMode.Locked;
 			Context.game.SetActive(true);
+			UiTextManager.instance.AddAllUiTextsToList();
+			UiTextManager.instance.ChangeTextColorForReadability();
 		}
 		
 
@@ -213,6 +223,7 @@ public class Main : MonoBehaviour
 		public override void OnExit()
 		{
 			base.OnExit();
+			UiTextManager.instance.ClearTextsList();
 			Context.game.SetActive(false);
 		}
 	}
@@ -231,6 +242,8 @@ public class Main : MonoBehaviour
 			Context.authorship.SetActive(true);
 			Cursor.visible = true;
 			Cursor.lockState = CursorLockMode.None;
+			UiTextManager.instance.AddAllUiTextsToList();
+			UiTextManager.instance.ChangeTextColorForReadability();
 		}
 
 		public override void Update()
@@ -242,6 +255,7 @@ public class Main : MonoBehaviour
 		public override void OnExit()
 		{
 			base.OnExit();
+			UiTextManager.instance.ClearTextsList();
 			Context.authorship.SetActive(false);
 		}
 	}
@@ -256,6 +270,9 @@ public class Main : MonoBehaviour
 			Context.gameState = GameState.End;
 			Context.end.SetActive(true);
 			Context.poem.text = poemText;
+			Context.poem.color = UiTextManager.instance.GetNewTextColorForReadability();
+			UiTextManager.instance.AddAllUiTextsToList();
+			UiTextManager.instance.ChangeTextColorForReadability();
 		}
 		
 		public override void Update()
@@ -267,6 +284,7 @@ public class Main : MonoBehaviour
 		public override void OnExit()
 		{
 			base.OnExit();
+			UiTextManager.instance.ClearTextsList();
 			Context.end.SetActive(false);
 		}
 	}

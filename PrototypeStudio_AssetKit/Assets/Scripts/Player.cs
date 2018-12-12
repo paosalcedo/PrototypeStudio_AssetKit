@@ -32,6 +32,7 @@ public class Player : MonoBehaviour
 
 		player = ReInput.players.GetPlayer(playerId);
 		rb = GetComponent<Rigidbody>();
+		
 	}
 
 	// Update is called once per frame
@@ -111,12 +112,12 @@ public class Player : MonoBehaviour
 	
 	private void OnTriggerEnter(Collider other)
 	{
+		EventManager.Instance.Fire(new Events.PlayerWordCollisionEvent());
 		if (other.gameObject.GetComponent<Word>() != null)
 		{	
 			TextMeshPro wordHit = other.gameObject.GetComponent<TextMeshPro>();
 			string text = wordHit.text;
 			wordHit.color = Color.yellow;
-			AudioManager.instance.PlaySFXOnHit();
 			if (wordsWritten <= 4 && wordsWritten > 0)
 			{
 //				TextUtilities.WriteStringToFile(Application.dataPath, Main.author + "_" + Main.poemNum, wordHit.text + " ", false);
