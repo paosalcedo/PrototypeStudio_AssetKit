@@ -96,6 +96,7 @@ public class AudioAndSkyManager : MonoBehaviour
 //		Debug.Log("Skybox color is: " + _skyColor.r + " " + _skyColor.g + " " + _skyColor.b);
 	
 		_newMat.SetColor("_Tint", _skyColor);
+		UiTextManager.instance.GetNewImageColorForReadability(Main.instance.Crosshair);
 	}
 
 	private void OnDestroy()

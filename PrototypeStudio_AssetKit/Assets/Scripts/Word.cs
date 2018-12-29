@@ -6,6 +6,9 @@ using DG.Tweening;
 
 public class Word : MonoBehaviour
 {
+	//from laurenz:
+	//what if you make the words change in size depending on how often they occur?
+
 	private const float MAX_DRAW_DIST = 30f;
 	private FSM<Word> _fsm;
 	private bool hasCollider;

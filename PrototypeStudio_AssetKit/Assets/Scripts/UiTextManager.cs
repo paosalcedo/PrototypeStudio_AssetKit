@@ -70,7 +70,7 @@ public class UiTextManager : MonoBehaviour
 	// Update is called once per frame
 	public Color GetNewTextColorForReadability()
 	{
-		Debug.Log("Changing ui text color!");
+//		Debug.Log("Changing ui text color!");
 		if (AudioAndSkyManager.instance.IsSkyColorCloseToBlack)
 		{
 			foreach (var text in _texts)
@@ -88,5 +88,15 @@ public class UiTextManager : MonoBehaviour
 			}
 		}
 		return Color.black;
+	}
+
+	public void GetNewImageColorForReadability(Image i)
+	{
+		if (AudioAndSkyManager.instance.IsSkyColorCloseToBlack)
+		{
+			i.color = Random.ColorHSV(0.75f, 1, 0.75f, 1, 0.75f, 1);
+			return;
+		}
+		i.color = Random.ColorHSV(0, 0.25f, 0, 0.25f, 0, 0.25f);
 	}
 }

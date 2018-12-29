@@ -12,6 +12,13 @@ public class Main : MonoBehaviour
 {
 	[SerializeField]private GameObject _playerModel;
 	[SerializeField] private Player _player;
+	[SerializeField] private Image _crosshair;
+
+	public Image Crosshair
+	{
+		get { return _crosshair; }
+		set { _crosshair = value; }
+	}
 
 	public enum GameState
 	{
@@ -21,6 +28,8 @@ public class Main : MonoBehaviour
 		End
 	}
 
+	public static Main instance;
+	
 	private FSM<Main> _fsm;
 	public GameState gameState; 
 
@@ -53,6 +62,15 @@ public class Main : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		if (instance == null)
+		{
+			instance = this;
+		}
+		else
+		{
+			Destroy(this);
+		}
+
 		_fsm = new FSM<Main>(this);
  		wordEmitter = FindObjectOfType<WordEmitter>();
 		wordsHolder = GameObject.Find("Words");
@@ -190,6 +208,7 @@ public class Main : MonoBehaviour
 		{
 			base.OnExit();
 			UiTextManager.instance.ClearTextsList();
+			//Set Player to active and attach to CharacterJoint.
 			Context._playerModel.SetActive(true);
 			Context._player.GetComponent<CharacterJoint>().connectedBody =
 				Context._playerModel.GetComponent<Rigidbody>();
@@ -207,6 +226,7 @@ public class Main : MonoBehaviour
 			Context.game.SetActive(true);
 			UiTextManager.instance.AddAllUiTextsToList();
 			UiTextManager.instance.ChangeTextColorForReadability();
+			Context._crosshair.color = UiTextManager.instance.GetNewTextColorForReadability();
 		}
 		
 
@@ -240,6 +260,7 @@ public class Main : MonoBehaviour
 			Context.poem.text = poemText;
 			Context.gameState = GameState.Authorship;
 			Context.authorship.SetActive(true);
+
 			Cursor.visible = true;
 			Cursor.lockState = CursorLockMode.None;
 			UiTextManager.instance.AddAllUiTextsToList();
