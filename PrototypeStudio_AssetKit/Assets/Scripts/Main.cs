@@ -141,7 +141,14 @@ public class Main : MonoBehaviour
 	//GAME FUNCTIONS
 	public void AppendAuthorNameToPoemText()
 	{
-		poemText = "by " + author + "\n" + poemText;
+		if (author == "")
+		{
+			poemText = "by " + "the Unnamed Poet" + "\n" + poemText;
+		}
+		else
+		{
+			poemText = "by " + author + "\n" + poemText;
+		}
 	}
 
 	public void AppendTitleToPoemText()
@@ -173,6 +180,7 @@ public class Main : MonoBehaviour
 
 	public void RestartGame()
 	{
+		UiTextManager.instance.ClearTextsList();
 		SceneManager.LoadScene("main");
 	}
 
@@ -188,7 +196,7 @@ public class Main : MonoBehaviour
 		public override void OnEnter()
 		{
 			base.OnEnter();
-			
+			AudioAndSkyManager.instance.SetupSkyboxMats();
 			Cursor.visible = true;
 			Cursor.lockState = CursorLockMode.None;
 			Context.intro.SetActive(true);
@@ -221,6 +229,7 @@ public class Main : MonoBehaviour
 		public override void OnEnter()
 		{
 			base.OnEnter();
+			Debug.Log("Entered gameplay state!");
 			Cursor.visible = false;
 			Cursor.lockState = CursorLockMode.Locked;
 			Context.game.SetActive(true);

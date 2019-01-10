@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class AudioAndSkyManager : MonoBehaviour
 {
@@ -41,6 +43,15 @@ public class AudioAndSkyManager : MonoBehaviour
 			music.loop = true;
 		}
 
+		SetupSkyboxMats();
+
+//		AudioSource sfx = gameObject.AddComponent<AudioSource>();
+//		sfx.playOnAwake = false;
+//		sfx.loop = false;
+	}
+
+	public void SetupSkyboxMats()
+	{
 		_newMat = new Material(_skyboxMat);
 		_skyColor = Random.ColorHSV();
 		_newMat.SetColor("_Tint", _skyColor);
@@ -54,19 +65,20 @@ public class AudioAndSkyManager : MonoBehaviour
 		{
 			IsSkyColorCloseToBlack = false;
 		}
-
-//		AudioSource sfx = gameObject.AddComponent<AudioSource>();
-//		sfx.playOnAwake = false;
-//		sfx.loop = false;
 	}
 
 	void Update()
 	{
+		//debug controls
 		if (Input.GetKeyDown(KeyCode.Alpha1))
 		{
 			EventManager.Instance.Fire(new Events.PlayerWordCollisionEvent());
 //			PlaySfxAndChangeSkyboxColorOnHit();
 		}
+		
+		if(Input.GetKeyDown(KeyCode.Alpha2))
+			_newMat.SetColor("_Tint", _skyColor);
+
 //		_skyboxMat.SetColor("_Tint", _skyColor);
 //		_skyboxMat.SetColor("Tint Color", _skyColor);
 	}
@@ -94,7 +106,7 @@ public class AudioAndSkyManager : MonoBehaviour
 		}
 		
 //		Debug.Log("Skybox color is: " + _skyColor.r + " " + _skyColor.g + " " + _skyColor.b);
-	
+
 		_newMat.SetColor("_Tint", _skyColor);
 		UiTextManager.instance.GetNewImageColorForReadability(Main.instance.Crosshair);
 	}

@@ -10,10 +10,14 @@ public class Word : MonoBehaviour
 	//what if you make the words change in size depending on how often they occur?
 
 	private const float MAX_DRAW_DIST = 30f;
+	private const float MIN_LOOK_AT_DIST = 25;
+
 	private FSM<Word> _fsm;
 	private bool hasCollider;
 
 	private GameObject wordsHolder;
+
+	private Color currentColor;
 	// Use this for initialization
 	void Start ()
 	{
@@ -24,8 +28,9 @@ public class Word : MonoBehaviour
 		_fsm.TransitionTo<LookingAtPlayer>();
 //		GetComponent<MeshRenderer>().
 		ChangeTextColorForReadability(new Events.PlayerWordCollisionEvent());
+		currentColor = GetComponent<TextMeshPro>().color;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		_fsm.Update();
@@ -44,12 +49,16 @@ public class Word : MonoBehaviour
 		if (AudioAndSkyManager.instance.IsSkyColorCloseToBlack)
 		{
 			GetComponent<TextMeshPro>().color = Random.ColorHSV(0.75f, 1, 0.75f, 1, 0.75f, 1);
+			currentColor = GetComponent<TextMeshPro>().color;
+			StartCoroutine(RestoreTextMeshProColorBeforeHit(GetComponent<TextMeshPro>()));
 		}
 		else //if it's closer to white
 		{
 //			GetComponent<TextMeshPro>().color = Random.ColorHSV(1,1.9f,1,1.9f,1,1.9f,1,1.9f);
 //			GetComponent<TextMeshPro>().color = Color.black;
 			GetComponent<TextMeshPro>().color = Random.ColorHSV(0, 0.25f, 0, 0.25f, 0, 0.25f);
+			currentColor = GetComponent<TextMeshPro>().color;
+			StartCoroutine(RestoreTextMeshProColorBeforeHit(GetComponent<TextMeshPro>()));
 		}
 	}
 
@@ -90,11 +99,6 @@ public class Word : MonoBehaviour
 		}
 	}
 
-	private void OnDestroy()
-	{
-		EventManager.Instance.Unregister<Events.PlayerWordCollisionEvent>(ChangeTextColorForReadability);
-	}
-
 	private void GenerateCollider()
 	{
 		gameObject.AddComponent<BoxCollider>();
@@ -115,6 +119,18 @@ public class Word : MonoBehaviour
 		playerDist = Vector3.Distance(Player.instance.transform.position, transform.position);
 		return playerDist;
 	}
+	
+	private IEnumerator RestoreTextMeshProColorBeforeHit(TextMeshPro someText)
+	{
+		yield return new WaitForSeconds(3f);
+		someText.color = currentColor;
+	}
+
+	private void OnDestroy()
+	{
+		Debug.Log("Word disabled!");
+		EventManager.Instance.Unregister<Events.PlayerWordCollisionEvent>(ChangeTextColorForReadability);
+	}
 
 	private class WordState : FSM<Word>.State
 	{
@@ -132,7 +148,7 @@ public class Word : MonoBehaviour
 		public override void Update()
 		{
 			base.Update();
-			if (Context.GetPlayerDistance() > 100)
+			if (Context.GetPlayerDistance() > 50)
 			{
  				Context.LookAtPlayer();
 			}
@@ -155,7 +171,7 @@ public class Word : MonoBehaviour
 			base.Update();
 			Context.TurnOnColliderWhenPlayerIsNear();
 
-			if (Context.GetPlayerDistance() >= 100)
+			if (Context.GetPlayerDistance() > 50)
 			{
 				TransitionTo<LookingAtPlayer>();
 			}

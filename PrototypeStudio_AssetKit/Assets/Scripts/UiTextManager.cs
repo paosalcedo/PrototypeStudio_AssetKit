@@ -27,11 +27,16 @@ public class UiTextManager : MonoBehaviour
 	{
 		if (_texts.Count < 1)
 		{
+			Debug.Log("Text count less than 1. Adding UI for color change now!");
 			_texts.AddRange(FindObjectsOfType<Text>());		
 		}
 		else
 		{ 
-			Debug.LogWarning("List isn't empty!");
+			Debug.LogWarning("List isn't empty, clearing first!");
+			_texts.Clear();
+//			Debug.LogWarning("List count is now " + _texts.Count);
+//			_texts.AddRange(FindObjectsOfType<Text>());	
+//			Debug.LogWarning("UI texts have been added; text count is now " + _texts.Count);
 		}
 	}
 
@@ -39,6 +44,7 @@ public class UiTextManager : MonoBehaviour
 	{
 		if (_texts.Count > 0)
 		{
+			Debug.Log("Clearing " + _texts.Count + " elements in UI text list!");
 			_texts.Clear();		
 		}
 		else

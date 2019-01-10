@@ -124,7 +124,7 @@ public class Player : MonoBehaviour
 				++wordsWritten;
 				myPoem = myPoem + wordHit.text +  " ";
 				Main.poemText = myPoem;
-				StartCoroutine(ChangeTextColorOnHit(wordHit));
+//				StartCoroutine(ChangeTextColorOnHit(wordHit));
 			}
 			else if (wordsWritten == 0)
 			{
@@ -132,7 +132,7 @@ public class Player : MonoBehaviour
 				myPoem = myPoem + "\n\n" + wordHit.text + " ";	
 				Main.poemText = myPoem;
 				++wordsWritten;
-				StartCoroutine(ChangeTextColorOnHit(wordHit));
+//				StartCoroutine(ChangeTextColorOnHit(wordHit));
 			}
 			else if (wordsWritten > 4)
 			{
@@ -140,7 +140,7 @@ public class Player : MonoBehaviour
 				myPoem = myPoem + wordHit.text + " ";
 				Main.poemText = myPoem;
 				wordsWritten = 1;
-				StartCoroutine(ChangeTextColorOnHit(wordHit));
+//				StartCoroutine(ChangeTextColorOnHit(wordHit));
 			} 
 
 
@@ -151,6 +151,6 @@ public class Player : MonoBehaviour
 	private IEnumerator ChangeTextColorOnHit(TextMeshPro someText)
 	{
 		yield return new WaitForSeconds(3f);
-		someText.color = Color.black;
+//		someText.color = Color.black;
 	}
 }
