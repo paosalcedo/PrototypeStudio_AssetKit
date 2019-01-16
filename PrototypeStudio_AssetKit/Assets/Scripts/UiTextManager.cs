@@ -43,12 +43,12 @@ public class UiTextManager : MonoBehaviour
 	{
 		if (_texts.Count > 0)
 		{
-			Debug.Log("Clearing " + _texts.Count + " elements in UI text list!");
+//			Debug.Log("Clearing " + _texts.Count + " elements in UI text list!");
 			_texts.Clear();		
 		}
 		else
 		{ 
-			Debug.LogWarning("Nothing to clear!");
+//			Debug.LogWarning("Nothing to clear!");
 		}
 	}
 
