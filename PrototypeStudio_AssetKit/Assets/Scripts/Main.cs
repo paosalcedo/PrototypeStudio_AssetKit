@@ -198,6 +198,11 @@ public class Main : MonoBehaviour
 		TextUtilities.ClearTextInFile("TEMP_POEM.txt");
 		SceneManager.LoadScene("main");
 	}
+	
+	void OnApplicationQuit()
+	{
+		TextUtilities.ClearTextInFile("TEMP_POEM.txt");
+	}
 
 	//states
 	
