@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using TMPro;
+using System;
+using System.Text;
 
 public class TextUtilities {
 
@@ -22,8 +24,15 @@ public class TextUtilities {
 
     public static string[] alphabet = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-    }; 
-    
+    };
+
+    public static void ClearTextInFile(string fileName)
+    {
+        string path = Application.dataPath + "/" + fileName;
+        File.WriteAllText(path, String.Empty);
+        
+    }
+
     public static void WriteStringToFile (string path, string fileName, string content, bool nextLine){
         StreamWriter sw = new StreamWriter (path + "/" + fileName, true);
 
@@ -58,4 +67,6 @@ public class TextUtilities {
         return result;
     }
     
+    
+
 }

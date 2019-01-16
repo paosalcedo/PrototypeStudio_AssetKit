@@ -5,16 +5,22 @@ using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
 
-public class WordEmitter : StreamReaderScript
+public class WordEmitter : TextReaderScript
 {
 //	private float emissionInterval = 0f;
 //	private List<GameObject> wordGameObjects = new List<GameObject>();
 	
 	private int wordIndex = 0;
 	public Font newFont;
-
+	[SerializeField]private float _sphereRadius;
+//	[SerializeField] private float _fontSizeMax;
+//	[SerializeField] private float _fontSizeMin;
+	[SerializeField] private Vector2 _fontSizeRange;
+	[SerializeField] private int _wordCount;
+	
 	public void Setup()
 	{
+		_sphereRadius = words.Count * 0.5f; 
 		for(wordIndex = 0; wordIndex<words.Count; ++wordIndex)
 		{
 			GameObject newWord = new GameObject("new word");
@@ -22,12 +28,14 @@ public class WordEmitter : StreamReaderScript
 			newWord.AddComponent<Word>();
 			TextMeshPro newTextMeshPro = newWord.GetComponent<TextMeshPro>();
 			newTextMeshPro.font = TextUtilities.GetTmpFontAsset("BKANT SDF");
-			newTextMeshPro.fontSize *= 3;
+			newTextMeshPro.fontSize *= Random.Range(_fontSizeRange.x, _fontSizeRange.y);
 			newTextMeshPro.enableWordWrapping = false;
 			newTextMeshPro.text = words[wordIndex];
 			newTextMeshPro.color = Color.black;
- 			newWord.transform.position = Player.instance.gameObject.transform.position + Random.insideUnitSphere * 1000f;
+ 			newWord.transform.position = Player.instance.gameObject.transform.position + Random.insideUnitSphere * _sphereRadius;
  		}
+
+		_wordCount = words.Count;
 	}
 
 //	public void Update()

@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using Rewired.Editor.Libraries.Rotorz.ReorderableList;
+﻿using System;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -29,18 +26,27 @@ public class Main : MonoBehaviour
 	}
 
 	public static Main instance;
-	
+
+	public enum Mode
+	{
+		Original,
+		CopyPaste
+	}
+
+	public Mode _mode;
+
 	private FSM<Main> _fsm;
 	public GameState gameState; 
 
 	public InputField titleField;
-	public InputField nameField;
+	public InputField poemField;
+	public InputField authorField;
 
 	public GameObject restartButton;
 	public GameObject controlsTextGO;
 	
 	public static string title;
-	public static string author;
+	public static string pastedPoem;
 	public static string poemText;
 	public int poemNum;
 
@@ -48,7 +54,7 @@ public class Main : MonoBehaviour
 	public TextMeshProUGUI poemBG;
 
 	private GameObject wordsHolder;
-	private StreamReaderScript srScript;
+	private TextReaderScript textReader;
 	private WordEmitter wordEmitter;
 	private Vector3 poemPosition;
 	private float poemY = 0;
@@ -56,7 +62,7 @@ public class Main : MonoBehaviour
 	//state-based gameobjects
 	[SerializeField] private GameObject intro;
 	[SerializeField] private GameObject game;
-	[SerializeField] private GameObject authorship;	
+	[SerializeField] private GameObject authorship;
 	[SerializeField] private GameObject end;
 	
 	// Use this for initialization
@@ -74,7 +80,7 @@ public class Main : MonoBehaviour
 		_fsm = new FSM<Main>(this);
  		wordEmitter = FindObjectOfType<WordEmitter>();
 		wordsHolder = GameObject.Find("Words");
-		srScript = FindObjectOfType<StreamReaderScript>();
+		textReader = FindObjectOfType<TextReaderScript>();
 		if (poemNum != 0)
 		{
 			++poemNum;		
@@ -100,13 +106,14 @@ public class Main : MonoBehaviour
 				
 				break;
 			case GameState.Authorship:
-																		
+							//poemText is updated here.											
 				break;
 			case GameState.End:
 				
 				ScrollPoem();
  				break;
 		}
+		
 	}
 	
 	private void ScrollPoem()
@@ -119,20 +126,28 @@ public class Main : MonoBehaviour
 	public void RecordTitleAndName()
 	{
 		title = titleField.text;
-		author = nameField.text;
-		TextUtilities.WriteStringToFile(Application.dataPath, title + "_" + author, titleField.text, true);
-		TextUtilities.WriteStringToFile(Application.dataPath, title + "_" + author, "\nA poem by " + nameField.text, true);
-		srScript.ReadPoem();
+		pastedPoem = poemField.text;
+		TextUtilities.WriteStringToFile(Application.dataPath, title + "_" + pastedPoem, titleField.text, true);
+		TextUtilities.WriteStringToFile(Application.dataPath, title + "_" + pastedPoem, "\nA poem by " + poemField.text, true);
+		textReader.ReadPoemOld();
 		wordEmitter.Setup();
 		gameState = GameState.Game;
 	}
-
+	
 	//INTRO FUNCTIONS
 	
 	public void StartGameScene()
 	{
-		author = nameField.text;
-		srScript.ReadPoem();
+		Debug.Log("startgamescene called!");
+		pastedPoem = poemField.text;
+		if (_mode == Mode.Original)
+		{
+			textReader.ReadPoemOld();		
+		}
+		else
+		{
+			textReader.ReadPoem();
+		}
 		wordEmitter.Setup();
 		_fsm.TransitionTo<GameplayState>();
  		gameState = GameState.Game;
@@ -141,29 +156,27 @@ public class Main : MonoBehaviour
 	//GAME FUNCTIONS
 	public void AppendAuthorNameToPoemText()
 	{
-		if (author == "")
+		if (_mode == Mode.Original)
 		{
-			poemText = "by " + "the Unnamed Poet" + "\n" + poemText;
-		}
-		else
-		{
-			poemText = "by " + author + "\n" + poemText;
+			if (pastedPoem == "")
+			{
+				poemText = "by " + "the Unnamed Poet" + "\n" + poemText;
+			}
+			else
+			{
+				poemText = "by " + pastedPoem + "\n" + poemText;
+			}
 		}
 	}
 
-	public void AppendTitleToPoemText()
+	public void AppendTitleAndAuthorToPoemText()
 	{
-		title = titleField.text;
-		poemText = title + "\n" + poemText;
+		poemText = titleField.text + "\n" + "by " + authorField.text + "\n" + poemText;
+		TextUtilities.WriteStringToFile(Application.dataPath, titleField.text + " by " + authorField.text + ".txt", "\n" + poemText, true);
 		_fsm.TransitionTo<EndState>();
 	}
 
 	//AUTHORSHIP FUNCTIONS
-
-	public void SaveAuthor()
-	{
-			
-	}
 
 	public void ViewPoem()
 	{
@@ -171,7 +184,7 @@ public class Main : MonoBehaviour
 		controlsTextGO.SetActive(false);
 		wordsHolder.SetActive(false);
 		restartButton.SetActive(true);
-		poem.text = TextUtilities.ReadTextFromFile(Application.dataPath, title + "_" + author);
+		poem.text = TextUtilities.ReadTextFromFile(Application.dataPath, title + "_" + pastedPoem);
 		
 		Player.instance.transform.eulerAngles = Vector3.right * -90f;
 		Camera.main.transform.localPosition = new Vector3(29.41f, -5.3f, -46.2f);
@@ -181,9 +194,11 @@ public class Main : MonoBehaviour
 	public void RestartGame()
 	{
 		UiTextManager.instance.ClearTextsList();
+//		FileUtil.DeleteFileOrDirectory(Application.dataPath + "/TEMP_POEM.txt");
+		poemText = String.Empty;
+		TextUtilities.ClearTextInFile("TEMP_POEM.txt");
 		SceneManager.LoadScene("main");
 	}
-
 
 	//states
 	
@@ -196,6 +211,8 @@ public class Main : MonoBehaviour
 		public override void OnEnter()
 		{
 			base.OnEnter();
+//			FileUtil.DeleteFileOrDirectory(Application.dataPath + "/TEMP_POEM.txt");
+			TextUtilities.ClearTextInFile("TEMP_POEM.txt");
 			AudioAndSkyManager.instance.SetupSkyboxMats();
 			Cursor.visible = true;
 			Cursor.lockState = CursorLockMode.None;
@@ -219,7 +236,7 @@ public class Main : MonoBehaviour
 			//Set Player to active and attach to CharacterJoint.
 			Context._playerModel.SetActive(true);
 			Context._player.GetComponent<CharacterJoint>().connectedBody =
-				Context._playerModel.GetComponent<Rigidbody>();
+			Context._playerModel.GetComponent<Rigidbody>();
 			Context.intro.SetActive(false);
 		}
 	}
@@ -244,7 +261,6 @@ public class Main : MonoBehaviour
 			base.Update();
 			if (Input.GetKeyDown(KeyCode.Return))
 			{
-				Context.AppendAuthorNameToPoemText();
 				TransitionTo<AuthorshipState>();
 			}
 		}
@@ -252,6 +268,7 @@ public class Main : MonoBehaviour
 		public override void OnExit()
 		{
 			base.OnExit();
+//			Context.AppendAuthorNameToPoemText();
 			UiTextManager.instance.ClearTextsList();
 			Context.game.SetActive(false);
 		}
@@ -272,6 +289,7 @@ public class Main : MonoBehaviour
 
 			Cursor.visible = true;
 			Cursor.lockState = CursorLockMode.None;
+			Context.poem.color = UiTextManager.instance.GetNewTextMeshProGuiColorForReadability(Context.poem);
 			UiTextManager.instance.AddAllUiTextsToList();
 			UiTextManager.instance.ChangeTextColorForReadability();
 		}
@@ -285,6 +303,8 @@ public class Main : MonoBehaviour
 		public override void OnExit()
 		{
 			base.OnExit();
+//			Context.();
+//			Context.AppendTitleAndAuthorToPoemText();
 			UiTextManager.instance.ClearTextsList();
 			Context.authorship.SetActive(false);
 		}
@@ -300,9 +320,11 @@ public class Main : MonoBehaviour
 			Context.gameState = GameState.End;
 			Context.end.SetActive(true);
 			Context.poem.text = poemText;
-			Context.poem.color = UiTextManager.instance.GetNewTextColorForReadability();
+			Context.poem.color = UiTextManager.instance.GetNewTextMeshProGuiColorForReadability(Context.poem);
+			Context.poemBG.color = UiTextManager.instance.GetNewTextMeshProGuiColorForReadability(Context.poemBG);
 			UiTextManager.instance.AddAllUiTextsToList();
 			UiTextManager.instance.ChangeTextColorForReadability();
+			
 		}
 		
 		public override void Update()

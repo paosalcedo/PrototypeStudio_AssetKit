@@ -26,7 +26,6 @@ public class Word : MonoBehaviour
 		transform.SetParent(wordsHolder.transform);
 		_fsm = new FSM<Word>(this);
 		_fsm.TransitionTo<LookingAtPlayer>();
-//		GetComponent<MeshRenderer>().
 		ChangeTextColorForReadability(new Events.PlayerWordCollisionEvent());
 		currentColor = GetComponent<TextMeshPro>().color;
 	}
@@ -123,12 +122,19 @@ public class Word : MonoBehaviour
 	private IEnumerator RestoreTextMeshProColorBeforeHit(TextMeshPro someText)
 	{
 		yield return new WaitForSeconds(3f);
+//		Debug.Log(currentColor);
+//		Debug.Log("changing color back to currentColor");
 		someText.color = currentColor;
+	}
+
+	private void OnDisable()
+	{
+		EventManager.Instance.Unregister<Events.PlayerWordCollisionEvent>(ChangeTextColorForReadability);
 	}
 
 	private void OnDestroy()
 	{
-		Debug.Log("Word disabled!");
+//		Debug.Log("Word disabled!");
 		EventManager.Instance.Unregister<Events.PlayerWordCollisionEvent>(ChangeTextColorForReadability);
 	}
 

@@ -27,12 +27,11 @@ public class UiTextManager : MonoBehaviour
 	{
 		if (_texts.Count < 1)
 		{
-			Debug.Log("Text count less than 1. Adding UI for color change now!");
 			_texts.AddRange(FindObjectsOfType<Text>());		
+			Debug.Log(_texts);
 		}
 		else
 		{ 
-			Debug.LogWarning("List isn't empty, clearing first!");
 			_texts.Clear();
 //			Debug.LogWarning("List count is now " + _texts.Count);
 //			_texts.AddRange(FindObjectsOfType<Text>());	
@@ -55,7 +54,6 @@ public class UiTextManager : MonoBehaviour
 
 	public void ChangeTextColorForReadability()
 	{
-		Debug.Log("Changing ui text color!");
 		if (AudioAndSkyManager.instance.IsSkyColorCloseToBlack)
 		{
 			foreach (var text in _texts)
@@ -76,7 +74,6 @@ public class UiTextManager : MonoBehaviour
 	// Update is called once per frame
 	public Color GetNewTextColorForReadability()
 	{
-//		Debug.Log("Changing ui text color!");
 		if (AudioAndSkyManager.instance.IsSkyColorCloseToBlack)
 		{
 			foreach (var text in _texts)
@@ -94,6 +91,19 @@ public class UiTextManager : MonoBehaviour
 			}
 		}
 		return Color.black;
+	}
+
+	public Color GetNewTextMeshProGuiColorForReadability(TextMeshProUGUI text)
+	{
+		if (AudioAndSkyManager.instance.IsSkyColorCloseToBlack)
+		{
+			text.color = Random.ColorHSV(0.75f, 1, 0.75f, 1, 0.75f, 1);
+			return text.color;
+		}
+		//if sky is closer to white, make text closer to black
+		text.color = Random.ColorHSV(0, 0.25f, 0, 0.25f, 0, 0.25f);
+		return text.color;
+
 	}
 
 	public void GetNewImageColorForReadability(Image i)

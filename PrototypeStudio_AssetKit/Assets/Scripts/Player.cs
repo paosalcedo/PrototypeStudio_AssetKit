@@ -19,7 +19,11 @@ public class Player : MonoBehaviour
 	[SerializeField] private Vector2 lookVector;
 
 	private int wordsWritten = 0;
+	private int lineCount = 0;
 	private string myPoem;
+	private const int LINE_LENGTH = 5;
+	private const int LINE_COUNT = 4;
+	private const float WORD_COLOR_DELAY = 3f;
 	
 	void Start ()
 	{
@@ -47,10 +51,10 @@ public class Player : MonoBehaviour
 				ProcessInput();
 				break;
 			case Main.GameState.End:
-				if (Input.GetKeyDown(KeyCode.R))
-				{
-					SceneManager.LoadScene("main");
-				}
+//				if (Input.GetKeyDown(KeyCode.R))
+//				{
+//					SceneManager.LoadScene("main");
+//				}
 				break;
 			default:
 				break;
@@ -112,45 +116,61 @@ public class Player : MonoBehaviour
 	
 	private void OnTriggerEnter(Collider other)
 	{
-		EventManager.Instance.Fire(new Events.PlayerWordCollisionEvent());
+		//add this back in if you want to use eventmanager for collision detection
+//		EventManager.Instance.Fire(new Events.PlayerWordCollisionEvent());
+		//comment this line below out to only use eventmanager for collision detection
+		AudioAndSkyManager.instance.PlaySfx();
 		if (other.gameObject.GetComponent<Word>() != null)
 		{	
 			TextMeshPro wordHit = other.gameObject.GetComponent<TextMeshPro>();
-			string text = wordHit.text;
+			Color color = wordHit.color;
 			wordHit.color = Color.yellow;
-			if (wordsWritten <= 4 && wordsWritten > 0)
+			StartCoroutine(ChangeTextColorOnHit(wordHit, color));
+			if (wordsWritten < LINE_LENGTH - 1 && wordsWritten > 0)
 			{
 //				TextUtilities.WriteStringToFile(Application.dataPath, Main.author + "_" + Main.poemNum, wordHit.text + " ", false);
 				++wordsWritten;
-				myPoem = myPoem + wordHit.text +  " ";
+				myPoem += wordHit.text +  " ";
 				Main.poemText = myPoem;
+//				Debug.Log(myPoem);
 //				StartCoroutine(ChangeTextColorOnHit(wordHit));
 			}
 			else if (wordsWritten == 0)
 			{
 //				TextUtilities.WriteStringToFile(Application.dataPath, Main.author + "_" + Main.poemNum, "\n\n" + wordHit.text + " ", false);
-				myPoem = myPoem + "\n\n" + wordHit.text + " ";	
+				if (lineCount >= LINE_COUNT)
+				{
+					lineCount = 0;
+					myPoem += "\n\n" + wordHit.text + " ";	
+					Main.poemText = myPoem;
+					++wordsWritten;
+					return;
+				}
+				myPoem += "\n" + wordHit.text + " ";	
 				Main.poemText = myPoem;
 				++wordsWritten;
+//				Debug.Log(myPoem);
 //				StartCoroutine(ChangeTextColorOnHit(wordHit));
 			}
-			else if (wordsWritten > 4)
+			else if (wordsWritten >= LINE_LENGTH - 1)
 			{
 //				TextUtilities.WriteStringToFile(Application.dataPath, Main.author + "_" + Main.poemNum, wordHit.text + " ", true);
-				myPoem = myPoem + wordHit.text + " ";
+				myPoem += wordHit.text + " ";
 				Main.poemText = myPoem;
-				wordsWritten = 1;
+				wordsWritten = 0;
+				++lineCount;
+//				Debug.Log(myPoem);
 //				StartCoroutine(ChangeTextColorOnHit(wordHit));
-			} 
+			}
 
 
 //			System.IO.File.WriteAllText(@"C:\Users\Pao Salcedo\Desktop\WriteText.txt", text);	
 		}
 	}
 
-	private IEnumerator ChangeTextColorOnHit(TextMeshPro someText)
+	private IEnumerator ChangeTextColorOnHit(TextMeshPro someText, Color colorPrev)
 	{
-		yield return new WaitForSeconds(3f);
-//		someText.color = Color.black;
+		yield return new WaitForSeconds(WORD_COLOR_DELAY);
+		someText.color = colorPrev;
 	}
 }

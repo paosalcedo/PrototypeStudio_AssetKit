@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 public class AudioAndSkyManager : MonoBehaviour
 {
-	private const float DARKNESS_THRESHOLD = 0.25f; //the closer to 0, the blacker the sky.  
+	private const float DARKNESS_THRESHOLD = 0.5f; //the closer to 0, the blacker the sky.  
 	
 	public static AudioAndSkyManager instance;
 
@@ -104,11 +104,17 @@ public class AudioAndSkyManager : MonoBehaviour
 		{
 			IsSkyColorCloseToBlack = false;
 		}
-		
-//		Debug.Log("Skybox color is: " + _skyColor.r + " " + _skyColor.g + " " + _skyColor.b);
-
+	
 		_newMat.SetColor("_Tint", _skyColor);
 		UiTextManager.instance.GetNewImageColorForReadability(Main.instance.Crosshair);
+	}
+	
+	public void PlaySfx()
+	{
+		AudioSource sfx = gameObject.AddComponent<AudioSource>();
+		sfx.clip = pianoClips[Random.Range(0, pianoClips.Length - 1)];
+		sfx.PlayScheduled(AudioSettings.dspTime + 0.00000001f);
+		Destroy(sfx, sfx.clip.length);
 	}
 
 	private void OnDestroy()
