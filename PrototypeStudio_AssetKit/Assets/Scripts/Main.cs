@@ -1,6 +1,5 @@
 ﻿using System;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -172,7 +171,7 @@ public class Main : MonoBehaviour
 	public void AppendTitleAndAuthorToPoemText()
 	{
 		poemText = titleField.text + "\n" + "by " + authorField.text + "\n" + poemText;
-		TextUtilities.WriteStringToFile(Application.dataPath, titleField.text + " by " + authorField.text + ".txt", "\n" + poemText, true);
+		TextUtilities.WriteStringToFile(Application.dataPath, "_" + titleField.text + " by " + authorField.text + ".txt", "\n" + poemText, true);
 		_fsm.TransitionTo<EndState>();
 	}
 
